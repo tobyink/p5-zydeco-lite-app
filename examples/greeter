@@ -1,4 +1,6 @@
 #! perl
+use FindBin '$Bin';
+use lib "$Bin/../lib";
 use Z::App;
 
 my $app = app sub {

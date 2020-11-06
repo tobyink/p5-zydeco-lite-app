@@ -306,9 +306,9 @@ Zydeco::Lite::app('Zydeco::Lite::App' => sub {
 		method 'find_config' => sub {
 			my ( $app ) = ( shift );
 			$app->can( 'config_file' ) or return;
-			my $filename = $app->config_file;
 			require Perl::OSType;
-			my @dirs = ( path(".") );
+			my @files = $self->config_file;
+			my @dirs  = ( path(".") );
 			if ( Perl::OSType::is_os_type( 'Unix' ) ) {
 				push @dirs, path( $ENV{XDG_CONFIG_HOME} || '~/.config' );
 				push @dirs, path('/etc');
@@ -321,10 +321,12 @@ Zydeco::Lite::app('Zydeco::Lite::App' => sub {
 			}
 			my @found;
 			for my $dir ( @dirs ) {
-				my $found = $dir->child("$filename");
-				push @found, $found if $found->is_file;
+				for my $file ( @files ) {
+					my $found = $dir->child("$file");
+					push @found, $found if $found->is_file;
+				}
 			}
-			reverse @found;
+			@found;
 		};
 		
 		method read_config => sub {
@@ -332,7 +334,7 @@ Zydeco::Lite::app('Zydeco::Lite::App' => sub {
 			my @files   = @_ ? map(path($_), @_) : $app->find_config;
 			my %config;
 			
-			for my $file ( @files ) {
+			for my $file ( reverse @files ) {
 				next unless $file->is_file;
 				
 				my $this_config = {};

@@ -119,8 +119,8 @@ sub _kingpin_handle {
 	my ( $me, $factory, $class, $kind, $name, $spec, $kingpin ) = ( shift, @_ );
 
 	my $flag = $kingpin->$kind(
-		$spec->{init_arg} || $name,
-		$spec->{description} || 'No description available.',
+		$spec->{init_arg}      || $name,
+		$spec->{documentation} || 'No description available.',
 	);
 	
 	if ( not ref $spec->{kingpin_type} ) {
@@ -240,16 +240,23 @@ sub _kingpin_handle {
 	}
 	
 	if ( $kind eq 'arg' ) {
-		if ( CodeRef->check( $spec->{default} ) ) {
+		if ( Types::TypeTiny::CodeLike->check( $spec->{default} ) ) {
 			my $cr = $spec->{default};
-			$flag->default( $class->$cr );
+			# For flags, MooX::Press does this prefilling
+			if ( blessed $cr and $cr->isa('Ask::Question') ) {
+				$cr->_set_type( $type ) unless $cr->has_type;
+				$cr->_set_text( $spec->{documentation} || $name ) unless $cr->has_text;
+				$cr->_set_title( $name ) unless $cr->has_title;
+				$cr->_set_spec( $spec ) unless $cr->has_spec;
+			}
+			$flag->default( sub { $cr->($class) } );
 		}
 		elsif ( exists $spec->{default} ) {
 			$flag->default( $spec->{default} );
 		}
 		elsif ( my $builder = $spec->{builder} ) {
 			$builder = "_build_$name" if is_Int($builder) && $builder eq 1;
-			$flag->default( $class->$builder );
+			$flag->default( sub { $class->$builder } );
 		}
 	}
 	
@@ -357,7 +364,6 @@ Zydeco::Lite::app('Zydeco::Lite::App' => sub {
 		method 'kingpin' => sub {
 			my ( $app, $kingpin ) = ( shift, @_ );
 			my $config = $app->read_config;
-			use Data::Dumper;
 			for my $cmd ( $app->commands ) {
 				my $class        = $app->get_class( $cmd  )    or next;
 				my $cmdname      = $class->command_name        or next;

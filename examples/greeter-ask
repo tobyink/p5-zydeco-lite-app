@@ -2,6 +2,7 @@
 use FindBin '$Bin';
 use lib "$Bin/../lib";
 use Z::App;
+use Ask;
 
 my $app = app sub {
 	
@@ -12,7 +13,7 @@ my $app = app sub {
 		
 		arg "addressee" => (
 			type          => Str,
-			default       => "world",
+			default       => Ask::Q( default => "world" ),
 			documentation => "Target of greeting.",
 		);
 	};
@@ -63,7 +64,7 @@ my $app = app sub {
 		
 		flag "greeting" => (
 			type          => Str,
-			default       => "Hello",
+			default       => Ask::Q( default => "Hello" ),
 			documentation => "A greeting string like 'Hello'.",
 			short         => 'G',
 		);		
@@ -77,7 +78,7 @@ my $app = app sub {
 		
 		flag "greeting" => (
 			type          => Str,
-			default       => "Goodbye",
+			default       => Ask::Q( default => "Goodbye" ),
 			documentation => "A greeting string like 'Goodbye'.",
 			short         => 'G',
 		);

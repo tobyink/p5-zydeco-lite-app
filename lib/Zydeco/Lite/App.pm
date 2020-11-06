@@ -4,7 +4,7 @@ use warnings;
 
 package Zydeco::Lite::App;
 
-use Getopt::Kingpin;
+use Getopt::Kingpin 0.10;
 use Path::Tiny 'path';
 use Type::Utils 'english_list';
 use Types::Path::Tiny -types;
@@ -158,6 +158,9 @@ sub _kingpin_handle {
 			elsif ( $type_parameter <= Int ) {
 				$flag->int_list;
 			}
+			elsif ( $type_parameter <= Num ) {
+				$flag->num_list;
+			}
 			else {
 				$flag->string_list;
 			}
@@ -180,6 +183,9 @@ sub _kingpin_handle {
 			}
 			elsif ( $type_parameter <= Int ) {
 				$flag->int_list;
+			}
+			elsif ( $type_parameter <= Num ) {
+				$flag->num_list;
 			}
 			else {
 				$flag->string_list;
@@ -205,6 +211,9 @@ sub _kingpin_handle {
 	}
 	elsif ( $type <= Int ) {
 		$flag->int;
+	}
+	elsif ( $type <= Num ) {
+		$flag->num;
 	}
 	else {
 		$flag->string;
@@ -270,35 +279,6 @@ sub run (&) {
 
 Zydeco::Lite::app('Zydeco::Lite::App' => sub {
 	
-	# Hack because Getopt::Kingpin::Base doesn't support HashRef
-	# flag types.
-	role 'Kingpin::Trait::Base' => sub {
-		
-		around 'set_value' => sub {
-			my $next = shift;
-			my $self = shift;
-			my $type = $self->type;
-			$self->_set_types($type);
-			if ($self->{is_hashref}) {
-				my %values;
-				if ($self->_defined) {
-					%values = %{$self->value};
-				}
-				my ($key, $val) = split(/=/, $_[0], 2);
-				my @ret = $Getopt::Kingpin::Base::types->{$type}{set_value}($self, $val);
-				if (scalar @ret > 1) {
-					return undef, $ret[1];
-				}
-				$values{$key} = $ret[0];
-				$self->_defined(1);
-				$self->value(\%values);
-			}
-			else {
-				$self->$next(@_);
-			}
-		};
-	};
-	
 	role 'Trait::Application' => sub {
 		
 		requires qw( commands );
@@ -307,7 +287,7 @@ Zydeco::Lite::app('Zydeco::Lite::App' => sub {
 			my ( $app ) = ( shift );
 			$app->can( 'config_file' ) or return;
 			require Perl::OSType;
-			my @files = $self->config_file;
+			my @files = $app->config_file;
 			my @dirs  = ( path(".") );
 			if ( Perl::OSType::is_os_type( 'Unix' ) ) {
 				push @dirs, path( $ENV{XDG_CONFIG_HOME} || '~/.config' );
@@ -540,11 +520,6 @@ Zydeco::Lite::app('Zydeco::Lite::App' => sub {
 		}
 	};
 });
-
-'Role::Tiny'->apply_roles_to_package(
-	'Getopt::Kingpin::Base',
-	__PACKAGE__ . '::Kingpin::Trait::Base',
-);
 
 1;
 

@@ -6,8 +6,8 @@ use Ask;
 
 my $app = app sub {
 	
-	constant description => "Greet the world, or just one person.";
-	constant config_file => 'greeting.toml';
+	constant documentation => "Greet the world, or just one person.";
+	constant config_file   => 'greeting.toml';
 	
 	role "CommonFlags" => sub {
 		
@@ -60,7 +60,7 @@ my $app = app sub {
 		
 		with "CommonFlags", "CommonBehaviour";
 		
-		constant description => "Greet somebody or something.";
+		constant documentation => "Greet somebody or something.";
 		
 		flag "greeting" => (
 			type          => Str,
@@ -74,7 +74,7 @@ my $app = app sub {
 		
 		with "CommonFlags", "CommonBehaviour";
 		
-		constant description => "Greet somebody or something.";
+		constant documentation => "Greet somebody or something.";
 		
 		flag "greeting" => (
 			type          => Str,

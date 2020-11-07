@@ -394,7 +394,7 @@ Zydeco::Lite::app('Zydeco::Lite::App' => sub {
 				$flag->{'_defined'} or next;
 				$flags{$name} = $flag->value;
 			}
-			my $cmd_object = $cmd_class->new( %flags );
+			my $cmd_object = $cmd_class->new( %flags, app => $app );
 			my @coerced = do {
 				my @values = map $_->value, $cmd->args->get_all;
 				my @args   = map @{ $_ or {} }, $cmd_object->_args_spec;
@@ -482,6 +482,12 @@ Zydeco::Lite::app('Zydeco::Lite::App' => sub {
 		
 		requires qw( _flags_spec _args_spec execute command_name );
 		
+		has 'app' => (
+			is      => 'lazy',
+			isa     => ClassName | Object,
+			default => sub { shift->FACTORY },
+		);
+		
 		has 'config' => (
 			is      => 'lazy',
 			type    => HashRef,
@@ -493,12 +499,12 @@ Zydeco::Lite::app('Zydeco::Lite::App' => sub {
 			}
 		);
 		
-		method 'description' => sub { 'No description available.' };
+		method 'documentation' => sub { 'No description available.' };
 		
 		method 'kingpin' => sub {
 			my ( $class, $kingpin, $defaults ) = ( shift, @_ );
 			
-			my $cmd = $kingpin->command( $class->command_name, $class->description );
+			my $cmd = $kingpin->command( $class->command_name, $class->documentation );
 			$cmd->{'zylite_app_class'} = $class;
 			
 			my %specs = map %{ $_ or {} }, $class->_flags_spec;
@@ -519,7 +525,6 @@ Zydeco::Lite::app('Zydeco::Lite::App' => sub {
 		};
 		
 		# Delegate some things to app
-		method 'app' => sub { shift->FACTORY };
 		for ( qw/ print debug info warn error fatal usage success / ) {
 			my $method = $_;
 			method $method => sub { shift->app->$method( @_ ) };

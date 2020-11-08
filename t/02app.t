@@ -7,6 +7,7 @@ my $app = app sub {
 	command 'MyCommand', sub {
 		flag 'someflag1' => ( type => File ); 
 		flag 'someflag2' => ( type => Int ); 
+		arg 'paths'      => ( type => HashRef[Path] );
 		
 		has 'count' => ( is => 'rw', type => Int, default => 0 );
 		has 'fails' => ( is => 'rw', type => Int, default => 0 );
@@ -34,10 +35,34 @@ my $app = app sub {
 		};
 		
 		run {
-			my $self = shift;
+			my ( $self, $files ) = ( shift, @_ );
 			$self->ok(
-				@_ == 0,
-				'no args',
+				@_ == 1,
+				'one arg',
+			);
+			$self->ok(
+				is_HashRef( $files ),
+				'... which is a hashref',
+			);
+			$self->ok(
+				join( "/", sort keys %$files ) eq "a/b",
+				'... with correct keys',
+			);
+			$self->ok(
+				is_Path($files->{'a'}),
+				'... with correct value type for key "a"',
+			);
+			$self->ok(
+				$files->{'a'}->basename eq "a.txt",
+				'... ... and correct value',
+			);
+			$self->ok(
+				is_Path($files->{'b'}),
+				'... with correct value type for key "b"',
+			);
+			$self->ok(
+			$files->{'b'}->basename eq "b.txt",
+				'... ... and correct value',
 			);
 			$self->ok(
 				is_Object($self->someflag1),
@@ -60,6 +85,6 @@ my $app = app sub {
 	};
 };
 
-$app->execute();
+$app->execute( 'a=a.txt', 'b=b.txt' );
 die;
 

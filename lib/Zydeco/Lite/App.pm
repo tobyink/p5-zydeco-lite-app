@@ -178,29 +178,28 @@ sub _kingpin_handle {
 		if ( $type->is_parameterized and $type->parent == ArrayRef ) {
 			my $type_parameter = $type->type_parameter;
 			if ( $type_parameter <= File ) {
-				$flag->existing_file_list;
+				$flag->existing_file_hash;
 			}
 			elsif ( $type_parameter <= Dir ) {
-				$flag->existing_dir_list;
+				$flag->existing_dir_hash;
 			}
 			elsif ( $type_parameter <= Path ) {
-				$flag->file_list;
+				$flag->file_hash;
 			}
 			elsif ( $type_parameter <= Int ) {
-				$flag->int_list;
+				$flag->int_hash;
 			}
 			elsif ( $type_parameter <= Num ) {
-				$flag->num_list;
+				$flag->num_hash;
 			}
 			else {
-				$flag->string_list;
+				$flag->string_hash;
 			}
 		} #/ if ( $type->is_parameterized...)
 		else {
-			$flag->string_list;
+			$flag->string_hash;
 		}
 		$flag->placeholder( 'KEY=VAL' ) if $flag->can( 'placeholder' );
-		$flag->{is_hashref} = true;
 	} #/ elsif ( $type <= HashRef )
 	elsif ( $type <= Bool ) {
 		$flag->bool;

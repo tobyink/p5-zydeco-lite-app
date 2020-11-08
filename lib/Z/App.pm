@@ -4,6 +4,8 @@ use warnings;
 package Z::App;
 use parent 'Z';
 
+use IO::Handle ();
+
 sub modules {
 	my @modules = shift->SUPER::modules( @_ );
 	for my $mod ( @modules ) {

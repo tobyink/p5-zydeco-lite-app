@@ -1161,6 +1161,9 @@ initialized in the application's config file. Flags given on the command line
 override flags in the config files; flags given in config files override those
 given by environment variables; environment variables override defaults.
 
+Like args, flags can be defined in a parent class or a role. It can be helpful
+to define common flags in a role.
+
 =head2 C<< run >>
 
 The C<run> keyword just defines a method called "execute". The following are

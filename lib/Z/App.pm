@@ -4,6 +4,9 @@ use warnings;
 package Z::App;
 use parent 'Z';
 
+our $AUTHORITY = 'cpan:TOBYINK';
+our $VERSION   = '0.001';
+
 use IO::Handle ();
 
 sub modules {
@@ -15,6 +18,7 @@ sub modules {
 	}
 	return @modules;
 }
+
 1;
 
 __END__

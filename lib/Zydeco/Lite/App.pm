@@ -874,8 +874,13 @@ Determines config file type by the last part of the filename. Understands
 JSON, INI, YAML, and TOML, and will assume TOML if the file type cannot be
 determined from its name.
 
-This may be useful to override if you need to be able to handle other file
-types.
+Config::Tiny and YAML::XS or YAML::PP are required for reading those file
+types, but are not included in Zydeco::Lite::App's list of dependencies.
+TOML is the generally recommended file format for apps created with this
+module.
+
+This method may be useful to override if you need to be able to handle other
+file types.
 
 =item C<< kingpin >>
 

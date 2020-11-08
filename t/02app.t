@@ -5,8 +5,8 @@ my $app = app sub {
 		return 't-02app.toml';
 	};
 	command 'MyCommand', sub {
-		flag 'someflag1' => ( type => File ); 
-		flag 'someflag2' => ( type => Int ); 
+		flag 'someflag1' => ( type => File );
+		flag 'someflag2' => ( type => Int );
 		arg 'paths'      => ( type => HashRef[Path] );
 		
 		has 'count' => ( is => 'rw', type => Int, default => 0 );

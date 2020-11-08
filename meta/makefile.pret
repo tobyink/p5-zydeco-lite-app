@@ -3,6 +3,18 @@
 @prefix : <http://ontologi.es/doap-deps#>.
 
 `Zydeco-Lite-App`
+	:runtime-requirement    [ :on "Z 0.007"^^:CpanId ];
+	:runtime-requirement    [ :on "Zydeco::Lite 0.083"^^:CpanId ];
+	:runtime-requirement    [ :on "Getopt::Kingpin 0.10"^^:CpanId ];
+	:runtime-requirement    [ :on "parent"^^:CpanId ];
+	:runtime-requirement    [ :on "Perl::OSType"^^:CpanId ];
+	:runtime-requirement    [ :on "Term::ANSIColor"^^:CpanId ];
+	:runtime-requirement    [ :on "TOML::Parser"^^:CpanId ];
+	:runtime-requirement    [ :on "JSON::PP"^^:CpanId ];
+	:runtime-recommendation [ :on "YAML::XS"^^:CpanId ];
+	:runtime-recommendation [ :on "YAML::PP"^^:CpanId ];
+	:runtime-recommendation [ :on "Config::Tiny"^^:CpanId ];
+	:runtime-suggestion     [ :on "JSON::MaybeXS"^^:CpanId ];
 	:test-requirement       [ :on "Test::More 0.96"^^:CpanId ];
 	:develop-recommendation [ :on "Dist::Inkt 0.001"^^:CpanId ];
 	.

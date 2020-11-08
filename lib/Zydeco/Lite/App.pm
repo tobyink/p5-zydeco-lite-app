@@ -18,7 +18,7 @@ our $AUTHORITY = 'cpan:TOBYINK';
 our $VERSION   = '0.001';
 
 our @EXPORT = (
-	@Zydeco::Lite::EXPORT,
+  @Zydeco::Lite::EXPORT,
 	qw( arg flag command run ),
 );
 our @EXPORT_OK = @EXPORT;
@@ -305,7 +305,7 @@ Zydeco::Lite::app( 'Zydeco::Lite::App' => sub {
 		
 		method 'stdio'
 		=> sub {
-			my ( $app, $in, $out, $err ) = ( shift, @_ );
+			my ( $app, $in, $out, $err ) = ( shift->_proto, @_ );
 			$app->{stdin}  = $in  if $in;
 			$app->{stdout} = $out if $out;
 			$app->{stderr} = $err if $err;
@@ -523,6 +523,9 @@ Zydeco::Lite::app( 'Zydeco::Lite::App' => sub {
 			is      => 'lazy',
 			isa     => ClassName | Object,
 			default => sub { shift->FACTORY },
+			handles => { map +( $_ => $_ ), qw(
+				print debug info warn error fatal usage success readline success
+			) },
 		);
 		
 		has 'config' => (
@@ -565,16 +568,6 @@ Zydeco::Lite::app( 'Zydeco::Lite::App' => sub {
 			
 			return $cmd;
 		};
-		
-		# Delegate some things to app
-		for ( qw/ print debug info warn error fatal usage success / ) {
-			my $method = $_;
-			
-			method $method
-			=> sub {
-				shift->app->$method( @_ )
-			};
-		}
 	};
 } );
 
@@ -592,7 +585,136 @@ Zydeco::Lite::App - use Zydeco::Lite to quickly develop command-line apps
 
 =head1 SYNOPSIS
 
+In C<< consumer.pl >>:
+
+  #! perl
+  
+  use strict;
+  use warnings;
+  use Zydeco::Lite::App;
+  use Types::Standard -types;
+  
+  app 'MyApp' => sub {
+    
+    command 'Eat' => sub {
+      
+      constant documentation => 'Consume some food.';
+      
+      arg 'foods' => (
+        type          => ArrayRef[Str],
+        documentation => 'A list of foods.',
+      );
+      
+      run {
+        my ( $self, $foods ) = ( shift, @_ );
+        $self->info( "Eating $_." ) for @$foods;
+        return 0;
+      };
+    };
+    
+    command 'Drink' => sub {
+      
+      constant documentation => 'Consume some drinks.';
+      
+      arg 'drinks' => (
+        type          => ArrayRef[Str],
+        documentation => 'A list of drinks.',
+      );
+      
+      run {
+        my ( $self, $drinks ) = ( shift, @_ );
+        $self->info( "Drinking $_." ) for @$drinks;
+        return 0;
+      };
+    };
+  };
+  
+  'MyApp'->execute( @ARGV );
+
+At the command line:
+
+  $ ./consumer.pl help eat
+  usage: consumer.pl eat [<foods>...]
+  
+  Consume some food.
+  
+  Flags:
+    --help  Show context-sensitive help.
+  
+  Args:
+    [<foods>]  A list of foods.
+
+  $ ./consumer.pl eat pizza chocolate
+  Eating pizza.
+  Eating chocolate.
+
 =head1 DESCRIPTION
+
+L<Zydeco::Lite::App> extends L<Zydeco::Lite> to redefine the C<app> keyword
+to build command-line apps, and add C<command>, C<arg>, C<flag>, and C<run>
+keywords.
+
+It will handle C<< @ARGV >> processing, loading config files, and IO for you.
+
+=head2 C<< app >>
+
+=head3 The App Trait
+
+=over
+
+=item C<< commands >>
+
+=item C<< execute >>
+
+=item C<< execute_no_subcommand >>
+
+=item C<< stdio >>
+
+=item C<< stdin >>, C<< stdout >>, C<< stderr >>
+
+=item C<< readline >>
+
+=item C<< print >>, C<< debug >>, C<< usage >>, C<< info >>, C<< warn >>, C<< error >>, C<< fatal >>, C<< success >>
+
+=item C<< find_config >>
+
+=item C<< read_config >>
+
+=item C<< kingpin >>
+
+=back
+
+=head2 C<< command >>
+
+=head3 The Command Trait
+
+=over
+
+=item C<< command_name >>
+
+=item C<< documentation >>
+
+=item C<< execute >>
+
+=item C<< app >>
+
+=item C<< config >>
+
+=item C<< kingpin >>
+
+=back
+
+=head2 C<< arg >>
+
+=head2 C<< flag >>
+
+=head2 C<< run >>
+
+The C<run> keyword just defines a method called "execute". The following are
+equivalent:
+
+  run { ... };
+  method 'execute' => sub { ... };
 
 =head1 BUGS
 

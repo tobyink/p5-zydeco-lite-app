@@ -11,6 +11,7 @@
 	:runtime-requirement    [ :on "Term::ANSIColor"^^:CpanId ];
 	:runtime-requirement    [ :on "TOML::Parser"^^:CpanId ];
 	:runtime-requirement    [ :on "JSON::PP"^^:CpanId ];
+	:runtime-requirement    [ :on "indirect"^^:CpanId ];
 	:runtime-recommendation [ :on "YAML::XS"^^:CpanId ];
 	:runtime-recommendation [ :on "YAML::PP"^^:CpanId ];
 	:runtime-recommendation [ :on "Config::Tiny"^^:CpanId ];

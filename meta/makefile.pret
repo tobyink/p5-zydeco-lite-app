@@ -3,6 +3,7 @@
 @prefix : <http://ontologi.es/doap-deps#>.
 
 `Zydeco-Lite-App`
+	:runtime-requirement    [ :on "perl 5.010001"^^:CpanId ];
 	:runtime-requirement    [ :on "Z 0.007"^^:CpanId ];
 	:runtime-requirement    [ :on "Zydeco::Lite 0.083"^^:CpanId ];
 	:runtime-requirement    [ :on "Getopt::Kingpin 0.10"^^:CpanId ];

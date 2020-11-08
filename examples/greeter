@@ -69,19 +69,6 @@ my $app = app sub {
 		);		
 	};
 
-	command "Goodbye" => sub {
-		
-		with "CommonFlags", "CommonBehaviour";
-		
-		constant description => "Greet somebody or something.";
-		
-		flag "greeting" => (
-			type          => Str,
-			default       => "Goodbye",
-			documentation => "A greeting string like 'Goodbye'.",
-			short         => 'G',
-		);
-	};
 };
 
 $app->execute( @ARGV );

@@ -1,4 +1,4 @@
-use Z::App;
+use Z::App -compat;
 
 my $app = app sub {
 	method 'config_file' => sub {

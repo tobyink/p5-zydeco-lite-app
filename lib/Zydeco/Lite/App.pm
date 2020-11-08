@@ -1074,6 +1074,10 @@ B<< HashRef[Int] >>, B<< HashRef[Num] >>, B<< HashRef[Str] >>,
 B<< HashRef[File] >>, B<< HashRef[Dir] >>, B<< HashRef[Path] >>,
 as well as any custom type constraint which can be coerced from strings.
 
+HashRef types are passed on the command line like:
+
+  ./myapp.pl somecommand key1=value1 key2=value2
+
 =item C<< kingpin_type >>
 
 In cases where C<type> is a custom type constraint and Zydeco::Lite::App

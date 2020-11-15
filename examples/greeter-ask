@@ -20,7 +20,7 @@ my $app = app sub {
 	
 	role "OutputMaybeToFile" => sub {
 		
-		requires qw( print );
+		requires qw( info );
 		
 		flag "file" => (
 			type          => Path,
@@ -35,7 +35,7 @@ my $app = app sub {
 				$self->file->spew_utf8( $str );
 			}
 			else {
-				$self->print( $str );
+				$self->info( $str );
 			}
 			
 			return;
@@ -85,4 +85,4 @@ my $app = app sub {
 	};
 };
 
-$app->execute( @ARGV );
+bless( { ask_backend => Ask->detect }, $app )->execute( @ARGV );

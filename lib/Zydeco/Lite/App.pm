@@ -486,7 +486,13 @@ Zydeco::Lite::app( 'Zydeco::Lite::App' => sub {
 			my $self = shift;
 			ref( $self ) && exists( $self->{stderr} ) ? $self->{stderr} : \*STDERR;
 		};
-			
+		
+		method 'ask_backend'
+		=> sub {
+			my $self = shift;
+			ref( $self ) ? $self->{ask_backend} : undef;
+		};
+		
 		method 'readline'
 		=> sub {
 			my $in   = shift->stdin;
@@ -530,15 +536,30 @@ Zydeco::Lite::app( 'Zydeco::Lite::App' => sub {
 			success => 'bold bright_green',
 		);
 		
+		my %ask = (
+			info    => 'info',
+			warn    => 'warning',
+			error   => 'error',
+			fatal   => 'error',
+			success => 'info',
+		);
+		
 		for my $key ( keys %colours ) {
-			my $level  = $key;
-			my $colour = $colours{$key};
+			my $level      = $key;
+			my $colour     = $colours{$key};
+			my $ask_method = $ask{$key};
 			
 			method $level
 			=> sub {
 				require Term::ANSIColor;
 				my $self = shift;
-				$self->stderr->print( Term::ANSIColor::colored( "$_\n", $colour ) ) for @_;
+				if ( ref($self) and my $ask_object = $self->ask_backend ) {
+					$ask_object->$ask_method( text => $_ ) for @_;
+				}
+				else {
+					$self->stderr->print( Term::ANSIColor::colored( "$_\n", $colour ) )
+						for @_;
+				}
 				$self->exit( 254 ) if $level eq 'fatal';
 				return;
 			};
